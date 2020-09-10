@@ -18,3 +18,5 @@ After that following steps to execute the code
 
 1- Copy source images in "Images" directory
 2- Download VGGNet19 model (link given with original code) into data/ directory. 
+3- Run "Prepare_twoImages.py"
+4- Run "train.py"
