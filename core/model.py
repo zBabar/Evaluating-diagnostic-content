@@ -56,6 +56,7 @@ class CaptionGenerator(object):
         self.features = tf.placeholder(tf.float32, [None, self.L, self.D])
         self.captions = tf.placeholder(tf.int32, [None, self.T + 1])
 
+
     def _get_initial_lstm(self, features):
         with tf.variable_scope('initial_lstm'):
             features_mean = tf.reduce_mean(features, 1)
@@ -127,6 +128,25 @@ class CaptionGenerator(object):
             out_logits = tf.matmul(h_logits, w_out) + b_out
             return out_logits
 
+    def beam_search_decoder(self,data, k):
+        sequences = [[list(), 1.0]]
+        # walk over each step in sequence
+        for row in data:
+            all_candidates = list()
+            # expand each current candidate
+            for i in range(len(sequences)):
+                seq, score = sequences[i]
+                length=tf.shape(row)[1]
+                for j in range(length):
+                    candidate = [seq + [j], score * -tf.log(row[j])]
+                    all_candidates.append(candidate)
+                #all_candidates=tf.map_fn(lambda candiate:[seq+[candiate],score * -tf.log(row[candiate])],tf.range(tf.shape(row)[1]))
+            # order all candidates by score
+            ordered = sorted(all_candidates, key=lambda tup: tup[1])
+            # select k best
+            sequences = ordered[:k]
+        return sequences
+
     def _batch_norm(self, x, mode='train', name=None):
         return tf.contrib.layers.batch_norm(inputs=x,
                                             decay=0.95,
@@ -140,6 +160,10 @@ class CaptionGenerator(object):
         features = self.features
         captions = self.captions
         batch_size = tf.shape(features)[0]
+        a=tf.rank(features)
+
+        #store logits for beam search
+        all_logits = []
 
         captions_in = captions[:, :self.T]
         captions_out = captions[:, 1:]
@@ -155,7 +179,7 @@ class CaptionGenerator(object):
 
         loss = 0.0
         alpha_list = []
-        lstm_cell = tf.nn.rnn_cell.BasicLSTMCell(num_units=self.H)
+        lstm_cell = tf.nn.rnn_cell.LSTMCell(num_units=self.H)
 
         for t in range(self.T):
             context, alpha = self._attention_layer(features, features_proj, h, reuse=(t!=0))
@@ -169,8 +193,62 @@ class CaptionGenerator(object):
 
             logits = self._decode_lstm(x[:,t,:], h, context, dropout=self.dropout, reuse=(t!=0))
 
-            loss += tf.reduce_sum(tf.nn.sparse_softmax_cross_entropy_with_logits(labels=captions_out[:, t],logits=logits)*mask[:, t] )
+            all_logits.append(logits[:])
 
+            loss += tf.reduce_sum(tf.nn.sparse_softmax_cross_entropy_with_logits(labels=captions_out[:, t],logits=logits)*mask[:, t] )
+        #all_logits=tf.stack(all_logits)
+
+        #sequences=self.beam_search_decoder(all_logits, 5)
+        if self.alpha_c > 0:
+            alphas = tf.transpose(tf.stack(alpha_list), (1, 0, 2))     # (N, T, L)
+            alphas_all = tf.reduce_sum(alphas, 1)      # (N, L)
+            alpha_reg = self.alpha_c * tf.reduce_sum((16./196 - alphas_all) ** 2)
+            loss += alpha_reg
+
+        return loss / tf.to_float(batch_size)
+    def valid_loss(self):
+        features = self.features
+        captions = self.captions
+        batch_size = tf.shape(features)[0]
+        a=tf.rank(features)
+
+        #store logits for beam search
+        all_logits = []
+
+        captions_in = captions[:, :self.T]
+        captions_out = captions[:, 1:]
+        mask = tf.to_float(tf.not_equal(captions_out, self._null))
+
+
+        # batch normalize feature vectors
+        features = self._batch_norm(features, mode='train', name='conv_features')
+
+        c, h = self._get_initial_lstm(features=features)
+        x = self._word_embedding(inputs=captions_in)
+        features_proj = self._project_features(features=features)
+
+        loss = 0.0
+        alpha_list = []
+        lstm_cell = tf.nn.rnn_cell.LSTMCell(num_units=self.H)
+
+        for t in range(self.T):
+            context, alpha = self._attention_layer(features, features_proj, h, reuse=(t!=0))
+            alpha_list.append(alpha)
+
+            if self.selector:
+                context, beta = self._selector(context, h, reuse=(t!=0))
+
+            with tf.variable_scope('lstm', reuse=(t!=0)):
+                _, (c, h) = lstm_cell(inputs=tf.concat( [x[:,t,:], context],1), state=[c, h])
+
+            logits = self._decode_lstm(x[:,t,:], h, context, reuse=(t!=0))
+
+            all_logits.append(logits[:])
+
+            loss += tf.reduce_sum(tf.nn.sparse_softmax_cross_entropy_with_logits(labels=captions_out[:, t],logits=logits)*mask[:, t] )
+        #all_logits=tf.stack(all_logits)
+
+        #sequences=self.beam_search_decoder(all_logits, 5)
         if self.alpha_c > 0:
             alphas = tf.transpose(tf.stack(alpha_list), (1, 0, 2))     # (N, T, L)
             alphas_all = tf.reduce_sum(alphas, 1)      # (N, L)
@@ -179,11 +257,20 @@ class CaptionGenerator(object):
 
         return loss / tf.to_float(batch_size)
 
-    def build_sampler(self, max_len=20):
+    def build_sampler(self, max_len=20,split='test'):
         features = self.features
-
+        val_batch_size = tf.shape(features)[0]
+        #my changes
+        captions = self.captions
+        #
+        captions_out = captions[:, 1:]
+        mask = tf.to_float(tf.not_equal(captions_out, self._null))
+        #store logits
+        all_logits=[]
+        loss_val=0.0
+        ############################ till here
         # batch normalize feature vectors
-        features = self._batch_norm(features, mode='test', name='conv_features')
+        features = self._batch_norm(features, mode=split, name='conv_features')
 
         c, h = self._get_initial_lstm(features=features)
         features_proj = self._project_features(features=features)
@@ -191,7 +278,7 @@ class CaptionGenerator(object):
         sampled_word_list = []
         alpha_list = []
         beta_list = []
-        lstm_cell = tf.nn.rnn_cell.BasicLSTMCell(num_units=self.H)
+        lstm_cell = tf.nn.rnn_cell.LSTMCell(num_units=self.H)
 
         for t in range(max_len):
             if t == 0:
@@ -210,10 +297,20 @@ class CaptionGenerator(object):
                 _, (c, h) = lstm_cell(inputs=tf.concat( [x, context],1), state=[c, h])
 
             logits = self._decode_lstm(x, h, context, reuse=(t!=0))
+
+            ##### Added by Zaheer
+
+            loss_val += tf.reduce_sum(tf.nn.sparse_softmax_cross_entropy_with_logits(labels=captions_out[:, t], logits=logits) * mask[:, t])
+
+            #### End
+            #storing logits for beam search
+            #all_logits.append(logits)
+
             sampled_word = tf.argmax(logits, 1)
             sampled_word_list.append(sampled_word)
-
+        #all_logits=tf.stack(all_logits)
+        #self.beam_search_decoder(all_logits,5)
         alphas = tf.transpose(tf.stack(alpha_list), (1, 0, 2))     # (N, T, L)
         betas = tf.transpose(tf.squeeze(beta_list), (1, 0))    # (N, T)
         sampled_captions = tf.transpose(tf.stack(sampled_word_list), (1, 0))     # (N, max_len)
-        return alphas, betas, sampled_captions
+        return alphas, betas, sampled_captions#,loss_val// tf.to_float(val_batch_size)
