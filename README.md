@@ -20,3 +20,7 @@ After that following steps to execute the code
 2- Download VGGNet19 model (link given with original code) into data/ directory. 
 3- Run "Prepare_twoImages.py"
 4- Run "train.py"
+
+Results would be stores in respective split in data folder
+
+Results can be recomputed using recompute files
