@@ -10,6 +10,7 @@ import hickle
 import nltk
 
 
+# Defining function to merg to image features image1+image2
 def merge_feature_maps(comb_map):
 
     numOfMaps=comb_map.shape[0]
@@ -146,12 +147,12 @@ def main():
     # batch size for extracting feature vectors from vggnet.
     batch_size = 500
     # maximum length of caption(number of word). if caption is longer than max_length, deleted.
-    max_length = 150
+    max_length = 110
     # # if word occurs less than word_count_threshold in training dataset, the word index is special unknown token.
     word_count_threshold = 1
     ## Data Path
-    #data_path = '/media/zaheer/Data/Image_Text_Datasets/IU_Xray/latest/two_images_split/word/Sample_test/'
-    data_path = '/media/zaheer/Data/Image_Text_Datasets/IU_Xray/latest/Two_Images/word/impression_first/Sample_test/'
+    
+    data_path = '/data/Sample_test/'
     # # vgg model path
     vgg_model_path = './data/imagenet-vgg-verydeep-19.mat'
     #
@@ -214,7 +215,7 @@ def main():
             annotations = load_pickle(anno_path)
             image_path = annotations['images']
             n_examples = len(image_path)
-
+            # ndarray to store image features from two images together
             all_feats = np.ndarray([n_examples, 196, 1024], dtype=np.float32)
             #all_feats = np.ndarray([n_examples, 196, 512], dtype=np.float32)
             i=0
