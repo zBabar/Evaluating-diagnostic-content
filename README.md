@@ -17,4 +17,4 @@ Follow all the required steps given with original code to steup the enviornement
 After that following steps to execute the code
 
 1- Copy source images in "Images" directory
-2- 
+2- Download VGGNet19 model (link given with original code) into data/ directory. 
