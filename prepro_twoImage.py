@@ -2,7 +2,6 @@ from scipy import ndimage
 from collections import Counter, OrderedDict
 from core.vggnet import Vgg19
 from core.utils import *
-from Main_Hyper import Main_hyper
 import tensorflow as tf
 import numpy as np
 import pandas as pd
@@ -10,7 +9,7 @@ import hickle
 import nltk
 
 
-# Defining function to merg to image features image1+image2
+# Defining function to merge to image features image1+image2
 def merge_feature_maps(comb_map):
 
     numOfMaps=comb_map.shape[0]
@@ -147,12 +146,12 @@ def main():
     # batch size for extracting feature vectors from vggnet.
     batch_size = 500
     # maximum length of caption(number of word). if caption is longer than max_length, deleted.
-    max_length = 110
+    max_length = 100
     # # if word occurs less than word_count_threshold in training dataset, the word index is special unknown token.
     word_count_threshold = 1
     ## Data Path
     
-    data_path = '/data/Sample_test/'
+    data_path = '/data/Sample1/'
     # # vgg model path
     vgg_model_path = './data/imagenet-vgg-verydeep-19.mat'
     #
