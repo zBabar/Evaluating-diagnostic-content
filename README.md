@@ -1,9 +1,9 @@
 # SAT_NEW
 Primarily this code is available on https://github.com/yunjey/show-attend-and-tell
 
-You have to follow all the required steps to setup this code with required libraries except the sequence to execute this code
+You have to follow all the required steps to setup this code with required libraries except the sequence to execute this code.
 
-We just customised this code as per our own requirements with respect to the use of Indiana University Dataset and also for following purposes
+We just customised this code as per our own requirements with respect to the use of Open-I Indiana University Dataset and also for following purposes
 
 1- Data Reading and Handeling
 2- Data Writing
