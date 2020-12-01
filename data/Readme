@@ -1,1 +1,16 @@
 Upload VGG19 model here
+
+The Open-I dataset can be downloaded using following link
+
+To download images.
+
+https://openi.nlm.nih.gov/imgs/collections/NLMCXR_png.tgz
+
+To download reports
+
+https://openi.nlm.nih.gov/imgs/collections/NLMCXR_reports.tgz
+
+
+Moreover, this data can also be download from kaggle
+
+https://www.kaggle.com/raddar/chest-xrays-indiana-university?select=indiana_reports.csv
