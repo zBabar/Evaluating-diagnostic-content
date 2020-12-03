@@ -21,6 +21,6 @@ After that following steps to execute the code
 3- Run "Prepare_twoImages.py"
 4- Run "train.py"
 
-Results would be stores in respective split in data folder
+Results would be stored in respective split in data folder
 
 Results can be recomputed using recompute files
