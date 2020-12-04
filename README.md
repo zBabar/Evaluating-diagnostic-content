@@ -5,10 +5,10 @@ You have to follow all the required steps to setup this code with required libra
 
 We just customised this code as per our own requirements with respect to the use of Open-I Indiana University Dataset and also for following purposes
 
-1- Data Reading and Handeling
-2- Data Writing
-3- Parameters 
-4- Usage of number of images
+- Data Reading and Handeling
+- Data Writing
+- Parameters 
+- Usage of number of images
 
 
 Follow all the required steps given with original code to steup the enviornement
@@ -16,11 +16,11 @@ Follow all the required steps given with original code to steup the enviornement
 
 After that following steps to execute the code
 
-1- Copy source images in "Images" directory
-2- Download VGGNet19 model (link given with original code) into data/ directory. 
-3- Run "Prepare_twoImages.py"
-4- Run "train.py"
+- Copy source images in "Images" directory
+- Download VGGNet19 model (link given with original code) into data/ directory 
+- Run "Prepare_twoImages.py"
+- Run "train.py"
 
-Results would be stored in respective split in data folder
+Results would be stored in the respective split in data folder.
 
-Results can be recomputed using recompute files
+Results can also be recomputed using recompute files.
