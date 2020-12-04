@@ -110,7 +110,7 @@ class BleuScorer(object):
         '''called by constructor and __iadd__ to avoid creating new instances.'''
         
         if refs is not None:
-            self.crefs.append(cook_refs(refs))
+            self.crefs.append(cook_refs(refs=refs))
             if test is not None:
                 cooked_test = cook_test(test, self.crefs[-1])
                 self.ctest.append(cooked_test) ## N.B.: -1
