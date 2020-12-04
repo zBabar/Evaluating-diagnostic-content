@@ -3,7 +3,7 @@ Primarily this code is available on https://github.com/yunjey/show-attend-and-te
 
 You have to follow all the required steps to setup this code with required libraries except the sequence to execute this code.
 
-We just customised this code as per our own requirements with respect to the use of Open-I Indiana University Dataset and also for following purposes
+We just customised this code as per our own requirements with respect to the use of Open-I Indiana University Chest X-rays Dataset and also for following purposes
 
 - Data Reading and Handeling
 - Data Writing
