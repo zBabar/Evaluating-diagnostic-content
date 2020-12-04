@@ -151,12 +151,12 @@ def main():
     word_count_threshold = 1
     ## Data Path
     
-    data_path = '/data/Sample1/'
+    data_path = './data/Sample1/'
     # # vgg model path
     vgg_model_path = './data/imagenet-vgg-verydeep-19.mat'
     #
     caption_file = 'data/annotations/captions_train2014.json'
-    image_dir = 'image/%2014_resized/'
+    image_dir = './image/%2014_resized/'
     #
     train_dataset = _process_caption_data(caption_data=data_path + 'train/train.json',max_length=max_length)
 
