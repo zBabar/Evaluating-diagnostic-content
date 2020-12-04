@@ -16,7 +16,7 @@ Follow all the required steps given with original code to steup the enviornement
 
 After that following steps to execute the code
 
-- Copy source images in "Images" directory
+- Copy source images (224,224) in "image" directory
 - Download VGGNet19 model (link given with original code) into data/ directory 
 - Run "Prepare_twoImages.py"
 - Run "train.py"
