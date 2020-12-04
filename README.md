@@ -23,4 +23,7 @@ After that following steps to execute the code
 
 Results would be stored in the respective split in data folder.
 
+- 'all_score.csv' contains both candidate and reference reports along with computed metric scores.
+- 'val.bleu.scores.txt' would contains accumulative metric scores.
+
 Results can also be recomputed using recompute files.
