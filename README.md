@@ -16,8 +16,8 @@ Follow all the required steps given with original code to steup the enviornement
 
 After that following steps to execute the code
 
-- Copy source resized images (224,224) into "image/train2014_resized" directory
-- Download VGGNet19 model (link given with original code) into data/ directory 
+- Copy source resized images (224,224) into "image/train2014_resized/" directory
+- Download VGGNet19 model (link given with original code) into "data" directory 
 - Run "Prepare_twoImages.py"
 - Run "train.py"
 
