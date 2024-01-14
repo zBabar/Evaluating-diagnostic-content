@@ -1,5 +1,5 @@
 # Evaluating Diagnostic-Content
-Primarily this code is available on https://github.com/yunjey/show-attend-and-tell
+Primarily the report generation code is available on https://github.com/yunjey/show-attend-and-tell
 
 You have to follow all the required steps to set up this code with the required libraries except the sequence to execute this code.
 
@@ -27,3 +27,6 @@ Results would be stored in the respective split in data folder.
 - 'val.bleu.scores.txt' would contains accumulative metric scores.
 
 Results can also be recomputed using recompute files.
+
+## DCS
+DCS code is available under the folder DCS
